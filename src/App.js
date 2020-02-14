@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import {Route, withRouter} from 'react-router-dom';
+import Nav from './components/Nav';
+import Callback from './components/Callback';
+import ListBook from './components/ListBook';
+import CreateBook from './components/CreateBook';
+import auth from './components/Auth';
+import GuardedRoute from './components/GuardedRoute';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+
+  async componentDidMount() {
+    if (this.props.location.pathname === '/callback') return;
+    try {
+      await auth.silentAuth();
+      this.forceUpdate();
+    } catch (err) {
+      if (err.error === 'login_required') return;
+      console.log(err.error);
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <Nav />
+        <Route exact path='/' component={ListBook} />
+        <GuardedRoute exact path='/create' component={CreateBook} />
+        <Route exact path='/callback' component={Callback} />
+      </div>
+    );
+  }
 }
 
-export default App;
+export default withRouter(App);

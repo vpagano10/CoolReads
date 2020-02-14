@@ -1,0 +1,1 @@
+curl -o src/loading.svg -O https://raw.githubusercontent.com/auth0-blog/book-app/master/client/src/loading.svg
